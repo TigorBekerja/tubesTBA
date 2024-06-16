@@ -1,91 +1,166 @@
 package main
 
-import "fmt"
-
-type arrByte [5]byte
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
 
 func main() {
-	var kalimat string
+	fmt.Println("Masukkan kalimat: ")
+	reader := bufio.NewReader(os.Stdin)
+	kalimat, _ := reader.ReadString('\n')
+	kalimat = strings.TrimSpace(kalimat)
 
-	bacaKalimat(&kalimat)
+	if bacaPredikat(kalimat) {
+		fmt.Println("Kalimat termasuk ke predikat")
+	} else {
+		fmt.Println("Kalimat bukan termasuk ke predikat")
+	}
 }
+//nyoba aja buat predikat, baru ke input memotong
 
 func bacaKalimat(kalimat *string) {
-	var statement byte
-	var point int
-	var error bool = false
+	fmt.Println("Kalimat yang dibaca: ", *kalimat)
+}
 
-	fmt.Scanf("%c", &statement)
-	fmt.Println(point)
-	for statement != '\r' {
-		if point == 0 {
-			if statement == 'a' {
-				point = 1
-			} else if statement == 'k' {
-				point = 2
-			} else if statement == 'd' {
-				point = 3
-			} else if statement == 'm' {
-				point = 4
-			} else {
-				break
-			}
-		} else if point == 1 && statement == 'k' {
-			point = 5
-		} else if point == 2 && statement == 'a' {
-			point = 6
-		} else if point == 3 && statement == 'i' {
-			point = 7
-		} else if point == 4 && statement == 'e' {
-			point = 8
-		} else if point == 5 && statement == 'u' {
-			point = 13
-		} else if point == 6 && statement == 'm' {
-			point = 9
-		} else if point == 7 && statement == 'a' {
-			point = 13
-		} else if point == 8 && statement == 'r' {
-			point = 10
-		} else if point == 9 && (statement == 'u' || statement == 'i') {
-			point = 13
-		} else if point == 10 && statement == 'e' {
-			point = 11
-		} else if point == 11 && statement == 'k' {
-			point = 12
-		} else if point == 12 && statement == 'a' {
-			point = 13
-		} else if point == 13 {
-			if statement == ' ' {
-				point = 14
-			} else {
-				error = true
-				break
-			}
-		} else if point == 14 {
-			if statement == ' ' {
-				point = 14
-			} else if statement == 'a' {
-				point = 1
-			} else if statement == 'k' {
-				point = 2
-			} else if statement == 'd' {
-				point = 3
-			} else if statement == 'm' {
-				point = 4
-			} else {
-				error = true
-				break
-			}
-		} else {
-			break
+func bacaPredikat(kalimat string) bool {
+	words := strings.Fields(kalimat)
+	for _, word := range words {
+		if isPredikat(word) {
+			return true
 		}
-		*kalimat = *kalimat + string(rune(statement)) //masukin satu satu ke string
-		fmt.Scanf("%c", &statement)
-		fmt.Println(point)
 	}
-	if (point == 13 || point == 14) && error == false {
-		fmt.Printf("kalimat termasuk ke subjek")
-	} else {
-		fmt.Printf("kalimat adalah bukan termasuk ke subjek")
+	return false
+}
+
+func isPredikat(word string) bool {
+	state := 0
+	for _, char := range word {
+		fmt.Printf("State: %d, Char: %c\n", state, char)
+		switch state {
+		case 0:
+			if char == 'm' {
+				state = 1
+			} else {
+				return false
+			}
+		case 1:
+			if char == 'e' {
+				state = 2
+			} else if char == 'a' || char == 'i' || char == 'u' || char == 'o' {
+				state = 4
+			} else {
+				return false
+			}
+		case 2:
+			if char == 'm' {
+				state = 3
+			} else if char == 'n' || char == 'l' || char == 'g' || char == 'b' {
+				state = 4
+			} else {
+				return false
+			}
+		case 3:
+			if char == 'o' {
+				state = 5
+			} else if char == 'b' {
+				state = 6
+			} else if char == 'n' || char == 'l' {
+				state = 4
+			} else {
+				return false
+			}
+		case 4:
+			if char == 'o' || char == 'i' || char == 'a' || char == 'u' {
+				state = 5
+			} else {
+				return false
+			}
+		case 5:
+			if char == 't' || char == 'k' {
+				state = 6
+			} else if char == 'b' {
+				state = 7
+			} else if char == 'n' || char == 'l' {
+				state = 8
+			} else if char == 'a' || char == 'e' || char == 'i' || char == 'u' {
+				state = 9
+			} else {
+				return false
+			}
+		case 6:
+			if char == 'o' || char == 'a' || char == 'e' || char == 'i' || char == 'u' {
+				state = 7
+			} else {
+				return false
+			}
+		case 7:
+			if char == 'n' || char == 'k' {
+				state = 8
+			} else {
+				return false
+			}
+		case 8:
+			if char == 'g' {
+				return true
+			} else if char == 'i' || char == 'a' || char == 'u' || char == 'e' {
+				state = 9
+			} else {
+				return false
+			}
+		case 9:
+			if char == 'h' || char == 'l' {
+				return true
+			} else if char == 'n' {
+				state = 10
+			} else if char == 't' {
+				state = 11
+			} else {
+				return false
+			}
+		case 10:
+			if char == 'g' {
+				return true
+			} else {
+				return false
+			}
+		case 11:
+			if char == 'e' {
+				state = 12
+			} else if char == 'k' {
+				state = 13
+			} else {
+				return false
+			}
+		case 12:
+			if char == 'h' {
+				return true
+			} else {
+				return false
+			}
+		case 13:
+			if char == 'i' {
+				state = 14
+			} else {
+				return false
+			}
+		case 14:
+			if char == 'n' {
+				state = 15
+			} else {
+				return false
+			}
+		case 15:
+			if char == 'g' {
+				return true
+			} else {
+				return false
+			}
+		default:
+			return false
+		}
 	}
+	return false
 }
