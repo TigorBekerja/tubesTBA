@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	var kalimat string
@@ -11,10 +13,8 @@ func main() {
 	bacaKalimat(&kalimat)
 	for i < len(kalimat) {
 		for j = i; j < len(kalimat) && kalimat[j] != ' '; j++ {
-			fmt.Println(i, j)
 			check = check + string(rune(kalimat[j]))
 		}
-		fmt.Println(check)
 		bacaSubjek(check, &struktur)
 		bacaPredikat(check, &struktur)
 		bacaObjek(check, &struktur)
@@ -300,74 +300,92 @@ func bacaKeterangan(kalimat string, struktur *string) {
 	for i := 0; i < len(kalimat); i++ {
 		statement = kalimat[i]
 		if point == 0 {
-			if statement == 'p' {
+			if statement == 's' {
 				point = 1
-			} else if statement == 'd' {
+			} else if statement == 'b' {
 				point = 2
-			}else{
+			} else if statement == 't' {
+				point = 3
+			} else if statement == 'n' {
+				point = 4
+			} else {
 				break
 			}
-		}else if point == 1 && statement == 'a' {
-			point = 3
-		}else if point == 2 && statement == 'i' {
-			point = 4
-		}else if point == 3 && statement == 'd' {
+		} else if point == 1 && statement == 'e' {
 			point = 5
-		}else if point == 4 && statement == ' ' {
+		} else if point == 2 && statement == 'e' {
 			point = 6
-		}else if point == 5 && statement == 'a' {
+		} else if point == 3 && statement == 'a' {
 			point = 7
-		}else if point == 6 {
-			if statement == 'r' {
-				point = 8
-			}else if statement == 'l' {
+		} else if point == 4 && statement == 'a' {
+			point = 8
+		} else if point == 5 {
+			if statement == 'k' {
 				point = 9
-			}else if statement == 'h' {
+			} else if statement == 'm' {
 				point = 10
-			}else{
+			} else {
 				break
 			}
-		}else if point == 7 && statement == ' ' {
+		} else if point == 6 && statement == 's' {
 			point = 11
-		}else if point == 8 && statement == 'u' {
+		} else if point == 7 && statement == 'd' {
 			point = 12
-		}else if point == 9 && statement == 'a' {
+		} else if point == 8 && statement == 'n' {
 			point = 13
-		}else if point == 10 && statement == 'a' {
+		} else if point == 9 && statement == 'a' {
 			point = 14
-		}else if point == 11 && statement == 'p' {
-			point = 24
-		}else if point == 12 && statement == 'm' {
+		} else if point == 10 && statement == 'a' {
 			point = 15
-		}else if point == 13 && statement == 'p' {
+		} else if point == 11 && statement == 'o' {
 			point = 16
-		}else if point == 14 && statement == 'l' {
+		} else if point == 12 && statement == 'i' {
+			point = 22
+		} else if point == 13 && statement == 't' {
+			point = 12
+		} else if point == 14 && statement == 'r' {
 			point = 17
-		}else if point == 15 && statement == 'a' {
+		} else if point == 15 && statement == 'l' {
 			point = 18
-		}else if point == 16 && statement == 'a' {
+		} else if point == 16 && statement == 'k' {
+			point = 22
+		} else if point == 17 && statement == 'a' {
 			point = 19
-		}else if point == 17 && statement == 'a' {
+		} else if point == 18 && statement == 'a' {
 			point = 20
-		}else if point == 18 && statement == 'h'{
-			point = 36
-		}else if point == 19 && statement == 'n' {
+		} else if point == 19 && statement == 'n' {
 			point = 21
-		}else if point == 20 && statement == 'm' {
+		} else if point == 20 && statement == 'm' {
 			point = 22
-		}else if point == 21 && statement == 'g' {
+		} else if point == 21 && statement == 'g' {
 			point = 22
-		}else if point == 22 && statement == 'a' {
-			point = 23
-		}else if point == 23 && statement == 'n' {
-			point = 36
-		}else if point == 24 && statement == 'a' {
-			point = 26
-		}else if point == 25 && statement == 'a' {
-			point = 27
-		}else if point == 26 && statement =
+		} else if point == 22 {
+			if statement == ' ' {
+				point = 23
+			} else {
+				error = true
+				break
+			}
+		} else if point == 23 {
+			if statement == ' ' {
+				point = 23
+			} else if statement == 'e' {
+				point = 1
+			} else if statement == 'b' {
+				point = 2
+			} else if statement == 't' {
+				point = 3
+			} else if statement == 'n' {
+				point = 4
+			} else {
+				error = true
+				break
+			}
+		} else {
+			break
+		}
 	}
-	if (point == 36 || point == 37) && error == false {
-		*struktur = *struktur + "O"
+	if (point == 22 || point == 23) && error == false {
+		*struktur = *struktur + "K"
 	}
 }
