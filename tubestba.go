@@ -252,7 +252,7 @@ func bacaKeterangan(kalimat *string) {
 			point = 17
 		} else if point == 15 && statement == 'a'{
 			point = 18
-		} else if point == 16 && statement == 'h'{
+		}  else if point == 16 && statement == 'h'{
 			point = 22
 		} else if point == 17 && statement == 'n'{
 			point = 19
