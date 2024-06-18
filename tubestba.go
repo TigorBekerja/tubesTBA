@@ -4,25 +4,25 @@ import (
 	"fmt"
 )
 
+type infotype byte
+type stack struct {
+	info [100]infotype
+	top  int
+}
+
 func main() {
 	var kalimat string
-	var struktur string
-	var check string
-	var i int
-	var j int = -1
 	bacaKalimat(&kalimat)
-	for i < len(kalimat) {
-		for j = i; j < len(kalimat) && kalimat[j] != ' '; j++ {
-			check = check + string(rune(kalimat[j]))
+	if tokenRecognizer(kalimat) {
+		fmt.Println("KATA DALAM KALIMAT VALID")
+		if parser(kalimat) {
+			fmt.Println("STRUKTUR KALIMAT VALID")
+		} else {
+			fmt.Println("STRUKTUR KALIMAT TIDAK VALID")
 		}
-		bacaSubjek(check, &struktur)
-		bacaPredikat(check, &struktur)
-		bacaObjek(check, &struktur)
-		bacaKeterangan(check, &struktur)
-		i = j + 1
-		check = ""
+	} else {
+		fmt.Println("KATA DALAM KALIMAT TIDAK VALID")
 	}
-	fmt.Println(struktur)
 }
 
 func bacaKalimat(kalimat *string) {
@@ -32,6 +32,30 @@ func bacaKalimat(kalimat *string) {
 		*kalimat = *kalimat + string(rune(input))
 		fmt.Scanf("%c", &input)
 	}
+}
+
+func tokenRecognizer(kalimat string) bool {
+	var struktur string
+	var check string
+	var i int
+	var j int = -1
+	var before string
+	for i < len(kalimat) {
+		for j = i; j < len(kalimat) && kalimat[j] != ' '; j++ {
+			check = check + string(rune(kalimat[j]))
+		}
+		before = struktur
+		bacaSubjek(check, &struktur)
+		bacaPredikat(check, &struktur)
+		bacaObjek(check, &struktur)
+		bacaKeterangan(check, &struktur)
+		i = j + 1
+		check = ""
+		if before == struktur {
+			return false
+		}
+	}
+	return true
 }
 
 func bacaSubjek(kalimat string, struktur *string) {
@@ -388,4 +412,195 @@ func bacaKeterangan(kalimat string, struktur *string) {
 	if (point == 22 || point == 23) && error == false {
 		*struktur = *struktur + "K"
 	}
+}
+
+func parser(kata string) bool {
+	var S stack
+	createStack(&S)
+	var atas infotype
+	var i int = -1
+	var error bool = false
+	push(&S, '#')
+	push(&S, 'I')
+	for S.info[S.top] != '#' {
+		atas = S.info[S.top]
+		if atas == 'I' {
+			pop(&S)
+			multipush(&S, "SPOK")
+		}
+		if atas == 'S' {
+			pop(&S)
+			if kata[i] == 'a' {
+				multipush(&S, "aku")
+			} else if kata[i] == 'k' && kata[i+1] == 'a' && kata[i+2] == 'm' {
+				if kata[i+3] == 'i' {
+					multipush(&S, "kami")
+				} else if kata[i+3] == 'u' {
+					multipush(&S, "kamu")
+				}
+			} else if kata[i] == 'd' {
+				multipush(&S, "dia")
+			} else if kata[i] == 'm' && kata[i+1] == 'e' && kata[i+2] == 'r' {
+				multipush(&S, "mereka")
+			} else {
+				multipush(&S, "S")
+				break
+			}
+		}
+		if atas == 'P' {
+			pop(&S)
+			if kata[i] == 'm' && kata[i+1] == 'e' {
+				if kata[i+2] == 'm' {
+					if kata[i+3] == 'o' {
+						multipush(&S, "memotong")
+					} else if kata[i+3] == 'b' {
+						multipush(&S, "membuat")
+					}
+				} else if kata[i+2] == 'n' && kata[i+3] == 'g' {
+					if kata[i+4] == 'i' {
+						multipush(&S, "mengikat")
+					} else if kata[i+4] == 'a' {
+						multipush(&S, "mengambil")
+					}
+				} else if kata[i+2] == 'l' {
+					multipush(&S, "melihat")
+				}
+			} else {
+				multipush(&S, "P")
+				break
+			}
+		}
+		if atas == 'O' {
+			pop(&S)
+			if kata[i] == 'k' && kata[i+1] == 'a' && kata[i+2] == 'y' {
+				multipush(&S, "kayu")
+			} else if kata[i] == 'b' && kata[i+1] == 'e' && kata[i+2] == 'n' {
+				multipush(&S, "bendera")
+			} else if kata[i] == 'b' && kata[i+1] == 'e' && kata[i+2] == 's' && kata[i+3] == 'i' {
+				multipush(&S, "besi")
+			} else if kata[i] == 'p' && kata[i+1] == 'a' {
+				if kata[i+2] == 'p' {
+					multipush(&S, "papan")
+				} else if kata[i+2] == 't' {
+					multipush(&S, "patung")
+				}
+			} else {
+				i = i - 1
+			}
+		}
+		if atas == 'K' {
+			pop(&S)
+			if kata[i] == 's' && kata[i+1] == 'e' {
+				if kata[i+2] == 'k' {
+					multipush(&S, "sekarang")
+				} else if kata[i+2] == 'm' {
+					multipush(&S, "semalam")
+				}
+			} else if kata[i] == 'b' && kata[i+1] == 'e' && kata[i+2] == 's' {
+				multipush(&S, "besok")
+			} else if kata[i] == 't' {
+				multipush(&S, "tadi")
+			}
+		}
+		if atas == 'a' {
+			pop(&S)
+		}
+		if atas == 'b' {
+			pop(&S)
+		}
+		if atas == 'd' {
+			pop(&S)
+		}
+		if atas == 'e' {
+			pop(&S)
+		}
+		if atas == 'g' {
+			pop(&S)
+		}
+		if atas == 'h' {
+			pop(&S)
+		}
+		if atas == 'i' {
+			pop(&S)
+		}
+		if atas == 'k' {
+			pop(&S)
+		}
+		if atas == 'l' {
+			pop(&S)
+		}
+		if atas == 'm' {
+			pop(&S)
+		}
+		if atas == 'n' {
+			pop(&S)
+		}
+		if atas == 'o' {
+			pop(&S)
+		}
+		if atas == 'p' {
+			pop(&S)
+		}
+		if atas == 'r' {
+			pop(&S)
+		}
+		if atas == 's' {
+			pop(&S)
+		}
+		if atas == 't' {
+			pop(&S)
+		}
+		if atas == 'u' {
+			pop(&S)
+		}
+		if atas == 'w' {
+			pop(&S)
+		}
+		if atas == 'y' {
+			pop(&S)
+		}
+		if i < len(kata)-1 {
+			i = i + 1
+		}
+		printInfo(S)
+		if S.info[S.top] == '#' && i != len(kata)-1 {
+			error = true
+		}
+	}
+	fmt.Print("akhir -> ")
+	if pop(&S) == '#' && !error {
+		return true
+	}
+	return false
+}
+
+func createStack(S *stack) {
+	S.top = -1
+}
+
+func push(S *stack, x infotype) {
+	S.top = S.top + 1
+	S.info[S.top] = x
+}
+
+func multipush(S *stack, x string) {
+	for i := len(x) - 1; i >= 0; i-- {
+		S.top = S.top + 1
+		S.info[S.top] = infotype(x[i])
+	}
+}
+
+func pop(S *stack) infotype {
+	var x infotype
+	x = S.info[S.top]
+	S.top = S.top - 1
+	return x
+}
+
+func printInfo(S stack) {
+	fmt.Print("TOP -> ")
+	for i := 0; i <= S.top; i++ {
+		fmt.Print(string(rune(S.info[i])), " ")
+	}
+	fmt.Println()
 }
