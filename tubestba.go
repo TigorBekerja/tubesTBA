@@ -12,6 +12,7 @@ type stack struct {
 
 func main() {
 	var kalimat string
+	fmt.Print("Masukkan kalimat: ")
 	bacaKalimat(&kalimat)
 	if tokenRecognizer(kalimat) {
 		fmt.Println("KATA DALAM KALIMAT VALID")
@@ -484,7 +485,7 @@ func parser(kata string) bool {
 				} else if kata[i+2] == 't' {
 					multipush(&S, "patung")
 				}
-			} else {
+			} else if i != len(kata)-1 {
 				i = i - 1
 			}
 		}
@@ -500,6 +501,8 @@ func parser(kata string) bool {
 				multipush(&S, "besok")
 			} else if kata[i] == 't' {
 				multipush(&S, "tadi")
+			} else if kata[i] == 'n' && kata[i+1] == 'a' {
+				multipush(&S, "nanti")
 			}
 		}
 		if atas == 'a' {
@@ -562,12 +565,10 @@ func parser(kata string) bool {
 		if i < len(kata)-1 {
 			i = i + 1
 		}
-		printInfo(S)
 		if S.info[S.top] == '#' && i != len(kata)-1 {
 			error = true
 		}
 	}
-	fmt.Print("akhir -> ")
 	if pop(&S) == '#' && !error {
 		return true
 	}
